@@ -1,6 +1,5 @@
-import { AppComponent } from './App.styles';
-function App() {
-  return <AppComponent>Test</AppComponent>;
-}
+import { DraggableBlockList } from './components/DraggableBlockList/DraggableBlockList';
 
-export default App;
+export const App = () => {
+  return <DraggableBlockList />;
+};

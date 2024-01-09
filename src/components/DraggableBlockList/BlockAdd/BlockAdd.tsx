@@ -29,6 +29,7 @@ export const BlockAdd = ({
         placeholder="Name block"
         value={inputContent}
         onChange={e => setInputContent(e.target.value)}
+        maxLength={20}
       />
       <AddButton onClick={handleAddBlock}>Add Item</AddButton>
     </TextInputWrapper>

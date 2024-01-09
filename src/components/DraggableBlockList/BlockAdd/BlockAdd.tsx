@@ -25,6 +25,7 @@ export const BlockAdd = ({
   return (
     <TextInputWrapper>
       <TextInput
+        id="add-block"
         type="text"
         placeholder="Name block"
         value={inputContent}

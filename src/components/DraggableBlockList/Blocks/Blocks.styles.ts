@@ -10,6 +10,9 @@ const BlockListWrapper = styled.div`
 
 const BlocksList = styled.ul`
   padding-inline-start: 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 `;
 
 const BlockItem = styled.li<{ $selected: boolean }>`
@@ -19,7 +22,6 @@ const BlockItem = styled.li<{ $selected: boolean }>`
   justify-content: space-between;
   gap: 5px;
   padding: 16px;
-  margin: 10px 0px;
   color: #cd7777;
   background-color: #6d335c;
   border-radius: 10px;
@@ -36,6 +38,7 @@ const BlockItem = styled.li<{ $selected: boolean }>`
     css`
       border: 2px solid #cd7777;
       box-shadow: 0px 0px 10px 0px #cd7777;
+      margin: -2px;
     `}
 `;
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   DragDropContext,
   Droppable,
@@ -16,9 +16,29 @@ import {
 import { BlockListProps } from '../DraggableBlockList.utils';
 
 export const Blocks = ({ blocks, setBlocks }: BlockListProps) => {
-  const [selectedBlockIndex, setSelectedBlockIndex] = useState<number | null>(
-    null,
-  );
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+
+  const blockListRef = useRef<HTMLElement | null>(null);
+  const moveButtonsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        blockListRef.current &&
+        !blockListRef.current.contains(event.target as Node) &&
+        moveButtonsRef.current &&
+        !moveButtonsRef.current.contains(event.target as Node)
+      ) {
+        setSelectedBlockId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleRemoveBlock = (id: string) => {
     const updatedBlocks = blocks.filter(block => block.id !== id);
     setBlocks(updatedBlocks);
@@ -31,27 +51,55 @@ export const Blocks = ({ blocks, setBlocks }: BlockListProps) => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     setBlocks(items);
+    const movedItemId = blocks[result.source.index]?.id;
+    setSelectedBlockId(
+      movedItemId === selectedBlockId ? result.draggableId : selectedBlockId,
+    );
   };
 
-  const moveItem = (currentIndex: number, targetIndex: number) => {
+  const moveItem = (currentId: string, targetIndex: number) => {
+    const currentIndex = blocks.findIndex(block => block.id === currentId);
+    if (currentIndex === -1) return;
+
     const newBlocks = [...blocks];
     const item = newBlocks.splice(currentIndex, 1)[0];
     newBlocks.splice(targetIndex, 0, item);
     setBlocks(newBlocks);
-    setSelectedBlockIndex(targetIndex);
+    setSelectedBlockId(
+      currentIndex === targetIndex ? currentId : newBlocks[targetIndex].id,
+    );
   };
 
   const handleMoveUp = () => {
-    if (selectedBlockIndex !== null && selectedBlockIndex > 0) {
-      moveItem(selectedBlockIndex, selectedBlockIndex - 1);
+    if (!selectedBlockId) return;
+
+    const currentIndex = blocks.findIndex(
+      block => block.id === selectedBlockId,
+    );
+    if (currentIndex !== -1 && currentIndex > 0) {
+      moveItem(selectedBlockId, currentIndex - 1);
     }
   };
 
   const handleMoveDown = () => {
-    if (selectedBlockIndex !== null && selectedBlockIndex < blocks.length - 1) {
-      moveItem(selectedBlockIndex, selectedBlockIndex + 1);
+    if (!selectedBlockId) return;
+
+    const currentIndex = blocks.findIndex(
+      block => block.id === selectedBlockId,
+    );
+    if (currentIndex !== -1 && currentIndex < blocks.length - 1) {
+      moveItem(selectedBlockId, currentIndex + 1);
     }
   };
+
+  const isMoveUpDisabled =
+    selectedBlockId === null ||
+    blocks.findIndex(block => block.id === selectedBlockId) === 0;
+
+  const isMoveDownDisabled =
+    selectedBlockId === null ||
+    blocks.findIndex(block => block.id === selectedBlockId) ===
+      blocks.length - 1;
 
   const showButtons = blocks.length >= 2;
   return (
@@ -59,7 +107,13 @@ export const Blocks = ({ blocks, setBlocks }: BlockListProps) => {
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="droppable">
           {provided => (
-            <BlocksList {...provided.droppableProps} ref={provided.innerRef}>
+            <BlocksList
+              {...provided.droppableProps}
+              ref={el => {
+                provided.innerRef(el);
+                blockListRef.current = el;
+              }}
+            >
               {blocks.map(({ id, name }, index) => (
                 <Draggable key={id} draggableId={id} index={index}>
                   {provided => (
@@ -67,8 +121,8 @@ export const Blocks = ({ blocks, setBlocks }: BlockListProps) => {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      $selected={selectedBlockIndex === index}
-                      onClick={() => setSelectedBlockIndex(index)}
+                      $selected={selectedBlockId === id}
+                      onClick={() => setSelectedBlockId(id)}
                     >
                       {name}
                       <RemoveButton onClick={() => handleRemoveBlock(id)}>
@@ -84,17 +138,11 @@ export const Blocks = ({ blocks, setBlocks }: BlockListProps) => {
         </Droppable>
       </DragDropContext>
       {showButtons && (
-        <MoveButtonsWrapper>
-          <MoveButton
-            onClick={handleMoveUp}
-            disabled={selectedBlockIndex === 0}
-          >
+        <MoveButtonsWrapper ref={moveButtonsRef}>
+          <MoveButton onClick={handleMoveUp} disabled={isMoveUpDisabled}>
             Up
           </MoveButton>
-          <MoveButton
-            onClick={handleMoveDown}
-            disabled={selectedBlockIndex === blocks.length - 1}
-          >
+          <MoveButton onClick={handleMoveDown} disabled={isMoveDownDisabled}>
             Down
           </MoveButton>
         </MoveButtonsWrapper>

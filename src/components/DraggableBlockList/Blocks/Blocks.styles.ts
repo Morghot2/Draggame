@@ -5,6 +5,7 @@ const BlockListWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 20px;
 `;
 
 const BlocksList = styled.ul`
@@ -12,12 +13,18 @@ const BlocksList = styled.ul`
 `;
 
 const BlockItem = styled.li<{ $selected: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
   padding: 16px;
   margin: 10px 0px;
   color: #cd7777;
   background-color: #6d335c;
   border-radius: 10px;
   width: 40vw;
+  word-break: break-all;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,7 +61,6 @@ const MoveButtonsWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-left: 20px;
   gap: 20px;
 `;
 

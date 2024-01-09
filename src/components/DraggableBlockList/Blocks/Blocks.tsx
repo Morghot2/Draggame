@@ -113,13 +113,15 @@ export const Blocks = ({ blocks, setBlocks }: BlockListProps) => {
       {showButtons && (
         <MoveButtonsWrapper ref={moveButtonsRef}>
           <MoveButton onClick={handleMoveUpAction} disabled={isMoveUpDisabled}>
-            Up
+            Move <br />
+            up
           </MoveButton>
           <MoveButton
             onClick={handleMoveDownAction}
             disabled={isMoveDownDisabled}
           >
-            Down
+            Move <br />
+            down
           </MoveButton>
         </MoveButtonsWrapper>
       )}

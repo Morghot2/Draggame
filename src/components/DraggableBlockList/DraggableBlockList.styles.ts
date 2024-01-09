@@ -5,9 +5,8 @@ const DraggableBlockListWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding-top: 50px;
-  width: 100vw;
-  height: 100vh;
-  background-color: #4d244e;
+  width: 100%;
+  height: calc(100vh - 50px);
   font-family: 'Poppins', sans-serif;
   font-family: Poppins;
 `;

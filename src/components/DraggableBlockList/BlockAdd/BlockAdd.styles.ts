@@ -9,7 +9,8 @@ const TextInputWrapper = styled.div`
 const TextInput = styled.input`
   font-family: 'Poppins', sans-serif;
   font-family: Poppins;
-  width: 20vw;
+  min-width: 20vw;
+  background-color: white;
   border: 1px solid #e56b6f;
   border-radius: 4px;
   padding-left: 8px;

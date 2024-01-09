@@ -4,6 +4,7 @@ const TextInputWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 16px;
+  margin-bottom: 20px;
 `;
 
 const TextInput = styled.input`
